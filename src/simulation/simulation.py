@@ -1,2 +1,2 @@
-class Simulaion:
+class Simulation:
     pass
