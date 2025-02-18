@@ -1,5 +1,5 @@
-from .entity import Entity
+from .entity import Creature
 
 
-class herbivore(Entity):
+class Herbivore(Creature):
     pass
