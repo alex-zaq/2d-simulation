@@ -3,10 +3,10 @@ from abc import ABC, abstractmethod
 from ..entities import Entity
 
 
-class search(ABC):
+class Search(ABC):
     @abstractmethod
     def search(self, map: dict, entity: Entity, target: Entity): ...
 
 
-class BFS(search):
+class BFS(Search):
     def search(self, map: dict, entity: Entity, target: Entity) -> list[(int, int)]: ...
