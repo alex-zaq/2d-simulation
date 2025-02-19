@@ -1,5 +1,5 @@
-from .backend import Backend, Config
-from .frontend import ConsoleFrontend, GuiFrontend
+from .backend import Backend, Backend_config
+from .frontend import ConsoleFrontend, Gui_config, GuiFrontend
 from .simulation import Simulation
 
-__all__ = ["Simulation", "Backend", "Config", "ConsoleFrontend", "GuiFrontend"]
+__all__ = ["Simulation", "Backend", "Backend_config", "ConsoleFrontend", "GuiFrontend", "Gui_config"]
