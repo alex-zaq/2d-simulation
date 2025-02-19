@@ -2,4 +2,4 @@ from .entity import Creature
 
 
 class Herbivore(Creature):
-    pass
+    health = 5
