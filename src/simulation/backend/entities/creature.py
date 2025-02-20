@@ -1,20 +1,11 @@
-from ..search_algoritms import Search
+from random import random
+
 from .entity import Entity
 
 
 class Creature(Entity):
-    
-    def __init__(self, x, y):
-        super().__init__(x, y)
-        
-    def move(self, dx, dy):
-        self.x += dx
-        self.y += dy
-
-    def search(
-        self,
-        map: dict,
-        entity: Entity,
-        target: Entity,
-        search_algorithm: Search
-    ): ...
+    def get_closest_random_coords(self, map):
+        max_x, max_y = max(map.keys())
+        new_x = max(0, min(self.x + random.randint(-1, 1), max_x))
+        new_y = max(0, min(self.y + random.randint(-1, 1), max_y))
+        return new_x, new_y
