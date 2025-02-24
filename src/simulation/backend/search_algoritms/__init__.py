@@ -1,3 +1,3 @@
-from .BFS import BFS, Search
+from .BFS import BFS
 
-__all__ = ["BFS", "Search"]
+__all__ = ["BFS"]

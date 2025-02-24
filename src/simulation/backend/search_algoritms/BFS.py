@@ -1,5 +1,7 @@
 from collections import deque
 
+from ..entities import Ground
+
 
 class BFS:
     @classmethod
@@ -20,7 +22,10 @@ class BFS:
                     path.append(current)
                 return path[::-1]
 
-            for neighbor in current.get_neighbors(map):
+            neighbors = current.get_neighbors(map)
+            filtered_neighbors = [n for n in neighbors if isinstance(n, (type(target), Ground))]
+
+            for neighbor in filtered_neighbors:
                 if neighbor not in visited:
                     visited.add(neighbor)
                     queue.append(neighbor)
