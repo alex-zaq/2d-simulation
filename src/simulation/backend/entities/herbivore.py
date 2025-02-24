@@ -1,4 +1,4 @@
-from .entity import Creature
+from .creature import Creature
 from .grass import Grass
 from .ground import Ground
 
