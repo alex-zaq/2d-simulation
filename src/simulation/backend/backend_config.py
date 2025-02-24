@@ -5,10 +5,13 @@ from dataclasses import dataclass
 
 @dataclass
 class Backend_config:
-    map_size: float
-    creatures_count: int
-    predators_ratio: float
-    grass_count: int
+    map_size: tuple[int, int]
+    herbivores_start_count: int
+    predators_start_count: float
+    grass_count: int 
     rock_count: int
-    search_algoritm: "str"
-    breeding: bool
+    predator_search_algoritm: str
+    herbivore_search_algoritm: str 
+    predator_breeding: bool
+    herbivore_breeding: bool
+    herbivore_escaping_skill: bool 
