@@ -14,9 +14,9 @@ class Simulation:
         
         
     def init(self):
-        self.backend.init()
-        state = self.backend.get_state()
-        self.frontend.set_state(state)
+        self.backend.map_init()
+        back_end_map = self.backend.get_map()
+        self.frontend.update_map(back_end_map)
         
         
     def next_step(self):
