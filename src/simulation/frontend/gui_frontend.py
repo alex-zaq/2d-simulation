@@ -2,18 +2,28 @@ import sys
 
 import pygame
 
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+GRAY = (150, 150, 150)
+GRID_COLOR = (200, 200, 200)  # Light gray
+BUTTON_COLOR = (150, 150, 150)
+BUTTON_HOVER_COLOR = (180, 180, 180)
+BUTTON_PANEL_COLOR = (220, 220, 220)
+
 
 class Button:
     def __init__(self, x, y, width, height, text):
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
-        self.color = (150, 150, 150)
         FONT = pygame.font.SysFont("arial", 24)
-        self.text_surface = FONT.render(text, True, (0, 0, 0))
+        self.text_surface = FONT.render(text, True, BLACK)
         self.text_rect = self.text_surface.get_rect(center=self.rect.center)
 
     def draw(self, surface):
-        pygame.draw.rect(surface, self.color, self.rect)
+        pygame.draw.rect(surface, GRAY, self.rect)
         pygame.draw.rect(surface, (0, 0, 0), self.rect, 2)
         surface.blit(self.text_surface, self.text_rect)
 
@@ -28,37 +38,45 @@ class GuiFrontend:
     def use_backend(self, backend):
         self.backend = backend
 
+
+    def _images_init(self):
+        orig_predator_img = pygame.image.load(self.gui_config.predator_pict)
+        orig_grass_img = pygame.image.load(self.gui_config.grass_pict)
+        orig_rock_img = pygame.image.load(self.gui_config.rock_pict)    
+        orig_herbivore_img = pygame.image.load(self.gui_config.herbivore_pict)
+
+        self.predator_image = pygame.transform.scale(orig_predator_img, (self.CELL_SIZE, self.CELL_SIZE))
+        self.grass_image = pygame.transform.scale(orig_grass_img, (self.CELL_SIZE, self.CELL_SIZE))
+        self.rock_image = pygame.transform.scale(orig_rock_img, (self.CELL_SIZE, self.CELL_SIZE))
+        self.herbivore_image = pygame.transform.scale(orig_herbivore_img, (self.CELL_SIZE, self.CELL_SIZE))
+
+    
+
     def window_init(self):
+
+
         pygame.init()
-
-        # self.gui_config
-
-        self.GRID_WIDTH = 20  # Изменено на 20
-        self.GRID_HEIGHT = 20  # Изменено на 10
+        pygame.display.set_caption("2d simulation")
+        GRID_WIDTH, GRID_HEIGHT = self.backend.config.map_size
+        self.GRID_WIDTH = GRID_WIDTH
+        self.GRID_HEIGHT = GRID_HEIGHT
         self.CELL_SIZE = 40
         self.GRID_AREA_WIDTH = self.GRID_WIDTH * self.CELL_SIZE
         self.GRID_AREA_HEIGHT = self.GRID_HEIGHT * self.CELL_SIZE
 
-        # Параметры кнопок
-        BUTTON_PANEL_HEIGHT = 100
+        self.BUTTON_PANEL_HEIGHT = 100
         self.SCREEN_WIDTH = self.GRID_AREA_WIDTH
-        self.SCREEN_HEIGHT = self.GRID_AREA_HEIGHT + BUTTON_PANEL_HEIGHT
-
+        self.SCREEN_HEIGHT = self.GRID_AREA_HEIGHT + self.BUTTON_PANEL_HEIGHT
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
-
-        self.WHITE = (255, 255, 255)
-        self.BLACK = (0, 0, 0)
-        self.GRID_COLOR = (200, 200, 200)
-        self.BUTTON_COLOR = (150, 150, 150)
-        self.BUTTON_HOVER_COLOR = (180, 180, 180)
-        self.BUTTON_PANEL_COLOR = (220, 220, 220)
-
         pygame.font.init()
+        
+        self._draw_grid()
+        self._draw_btns()
+        self._images_init()
 
-        original_image = pygame.image.load("images/Predator.png")
-        self.image = pygame.transform.scale(
-            original_image, (self.CELL_SIZE - 2, self.CELL_SIZE - 2)
-        )
+
+
+
 
     def run(self):
         active_cells = set()
@@ -69,50 +87,32 @@ class GuiFrontend:
                 if event.type == pygame.QUIT:
                     running = False
 
-                # Обработка движения мыши для эффекта наведения
-                if event.type == pygame.MOUSEMOTION:
-                    for button in self.buttons:
-                        button.color = (
-                            self.BUTTON_HOVER_COLOR
-                            if button.is_hovered(event.pos)
-                            else self.BUTTON_COLOR
-                        )
-                        button.draw(self.screen)
-                        pygame.display.update(button.rect)
 
-                # Обработка клика мыши
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    # Проверка клика по кнопкам
-                    for button in self.buttons:
+                    for button in self.buttons.values():
                         if button.is_hovered(event.pos):
                             print(f"Нажата {button.text}")
 
-                    # Проверка клика по сетке
-                    if event.pos[1] < self.GRID_AREA_HEIGHT:  # Только в пределах сетки
+                    if event.pos[1] < self.GRID_AREA_HEIGHT:
                         mouse_x, mouse_y = event.pos
 
-                        # Определяем, в какой cell попал клик
                         cell_x = mouse_x // self.CELL_SIZE
                         cell_y = mouse_y // self.CELL_SIZE
 
-                        # Очистка предыдущих активных ячеек
-                        self.draw_grid()  # Перерисовка всей сетки
+                        self._draw_grid()  
 
-                        # Добавление новой активной ячейки
                         active_cell = (cell_x, cell_y)
                         active_cells.clear()
                         active_cells.add(active_cell)
 
-                        # Отрисовка картинки в новой ячейке
                         self.screen.blit(
-                            self.image,
+                            self.predator_image,
                             (cell_x * self.CELL_SIZE + 1, cell_y * self.CELL_SIZE + 1),
                         )
 
-                        # Отрисовка панели кнопок
                         pygame.draw.rect(
                             self.screen,
-                            self.BUTTON_PANEL_COLOR,
+                            BUTTON_PANEL_COLOR,
                             (
                                 0,
                                 self.GRID_AREA_HEIGHT,
@@ -121,23 +121,25 @@ class GuiFrontend:
                             ),
                         )
 
-                        # Переотрисовка кнопок
-                        for button in self.buttons:
+                        for button in self.buttons.values():
                             button.draw(self.screen)
 
-                        # Обновление дисплея
                         pygame.display.update()
+                        
+                        
 
     def _draw_grid(self):
         self.screen.fill((255, 255, 255))
         for x in range(0, self.GRID_AREA_WIDTH + 1, self.CELL_SIZE):
             pygame.draw.line(
-                self.screen, self.GRID_COLOR, (x, 0), (x, self.GRID_AREA_HEIGHT)
+                self.screen, self.gui_config.grid_color, (x, 0), (x, self.GRID_AREA_HEIGHT)
             )
         for y in range(0, self.GRID_AREA_HEIGHT + 1, self.CELL_SIZE):
             pygame.draw.line(
-                self.screen, self.GRID_COLOR, (0, y), (self.GRID_AREA_WIDTH, y)
+                self.screen, self.gui_config.grid_color, (0, y), (self.GRID_AREA_WIDTH, y)
             )
+            
+        pygame.display.update()
 
     def _draw_btns(self):
         # Параметры кнопок
@@ -149,22 +151,37 @@ class GuiFrontend:
         total_buttons_width = 4 * BUTTON_WIDTH + 3 * BUTTON_SPACING
         start_x = (self.SCREEN_WIDTH - total_buttons_width) // 2
 
-        self.buttons = [
-            Button(
+        button_names = ["Start", "Reset", "Next step", "Previous step"]
+
+        self.buttons = {
+            button_names[i]: Button(
                 start_x + (BUTTON_WIDTH + BUTTON_SPACING) * i,
                 self.GRID_AREA_HEIGHT + (self.BUTTON_PANEL_HEIGHT - BUTTON_HEIGHT) // 2,
                 BUTTON_WIDTH,
                 BUTTON_HEIGHT,
-                f"Кнопка {i + 1}",
+                button_names[i],
             )
             for i in range(4)
-        ]
+        }
+        
+        
+        
+        
 
         pygame.draw.rect(
             self.screen,
-            self.BUTTON_PANEL_COLOR,
+            BUTTON_PANEL_COLOR,
             (0, self.GRID_AREA_HEIGHT, self.SCREEN_WIDTH, self.BUTTON_PANEL_HEIGHT),
         )
+        
+        for button in self.buttons.values():
+            button.draw(self.screen)
+            
+            
+        pygame.display.update()
+        
+        
+        
 
     def _stop(self):
         pygame.quit()
