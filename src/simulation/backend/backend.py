@@ -7,15 +7,14 @@ class Backend:
     def __init__(self, config):
         self.config = config
         self.set_spawner(Spawner(config))
+        self._set_search_stategy()
         self.history = []
 
-    def map_init(self):
-        self._set_search_stategy()
+    def generate_map(self):
         self.map = self.spawner.generate_map()
-        
+
     def get_map(self):
         return self.map
-        
 
     def set_spawner(self, spawner):
         self.spawner = spawner
