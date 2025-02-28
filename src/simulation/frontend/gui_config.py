@@ -9,3 +9,4 @@ class Gui_config:
     ground_pict: str
     grass_pict: str
     grid_color: str
+    delay_ms: int

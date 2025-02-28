@@ -81,6 +81,7 @@ class GuiFrontend:
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         pygame.font.init()
 
+        self.delay_ms = self.gui_config.delay_ms        
         self._draw_grid()
         self._draw_btns()
         self._images_init()
@@ -129,11 +130,11 @@ class GuiFrontend:
 
         return False
 
-    def on_click_run(self, pos):
-        btn = self.buttons["Start"]
+    def on_click_run(self, pos, auto_step_flag):
+        btn = self.buttons["Run"]
 
         if not btn.is_hovered(pos):
-            return
+            return auto_step_flag
 
         return True
 
@@ -144,8 +145,8 @@ class GuiFrontend:
             return auto_flag_status
 
         self.backend.next_step()
-        map = self.backend.get_map()
-        self.draw_map(map)
+        self.map = self.backend.get_map()
+        self.draw_map()
 
         return False
 
@@ -156,10 +157,10 @@ class GuiFrontend:
             return auto_flag_status
 
         self.backend.previous_step()
-        map = self.backend.get_map()
-        self.draw_map(map)
+        self.map = self.backend.get_map()
+        self.draw_map()
 
-        return True
+        return False
 
     def run(self):
         running = True
@@ -172,14 +173,15 @@ class GuiFrontend:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     auto_step_flag = self.on_click_reset_btn(event.pos, auto_step_flag)
                     auto_step_flag = self.on_click_next_btn(event.pos, auto_step_flag)
-                    # auto_step_flag = self.on_click_previous_btn(event.pos, auto_step_flag)
-                    # auto_step_flag = self.on_click_run(event.pos, auto_step_flag)
+                    auto_step_flag = self.on_click_previous_btn(event.pos, auto_step_flag)
+                    auto_step_flag = self.on_click_run(event.pos, auto_step_flag)
 
-                    # if auto_step_flag:
-                    #     self.backend.next_step()
-                    #     map = self.backend.get_map()
-                    #     self.draw_map(map)
-                    #     pygame.timer.delay(1000)
+            if auto_step_flag:
+                self.backend.next_step()
+                self.map = self.backend.get_map()
+                self.draw_map()
+                print("next step")
+                pygame.time.delay(self.delay_ms)
 
     def _draw_grid(self):
         self.clear_grid()
@@ -208,16 +210,14 @@ class GuiFrontend:
         # pygame.display.update()
 
     def _draw_btns(self):
-        # Параметры кнопок
         BUTTON_WIDTH = 180
         BUTTON_HEIGHT = 50
         BUTTON_SPACING = 20
 
-        # Создание кнопок с центрированием
         total_buttons_width = 4 * BUTTON_WIDTH + 3 * BUTTON_SPACING
         start_x = (self.SCREEN_WIDTH - total_buttons_width) // 2
 
-        button_names = ["Run", "Reset", "Next step", "Previous step"]
+        button_names = ["Run", "Reset", "Previous step", "Next step"]
 
         self.buttons = {
             button_names[i]: Button(
