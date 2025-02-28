@@ -14,4 +14,7 @@ class Backend_config:
     herbivore_search_algoritm: str 
     predator_breeding: bool
     herbivore_breeding: bool
-    herbivore_escaping_skill: bool 
+    herbivore_escaping: bool 
+    herbivore_escaping_radius: int
+    herbivore_through_wall: bool
+    predator_through_wall: bool

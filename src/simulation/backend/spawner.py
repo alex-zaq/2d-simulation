@@ -1,5 +1,6 @@
 import random
 
+from .map import Map
 from .entities import Grass, Herbivore, Predator, Rock
 
 
@@ -9,7 +10,7 @@ class CoordGenerator:
         self.y_count = y_count
         self.coords = set()
 
-    def get_non_repeating_coords_series(self, coord_count):
+    def get_non_rpt_coords_srs(self, coord_count):
         loc_coords = set()
         while len(loc_coords) < coord_count:
             coords = (
@@ -36,30 +37,26 @@ class Spawner:
 
         x_count, y_count = self.config.map_size
 
-        # map = {(x, y): Ground(x, y) for x in range(x_count) for y in range(y_count)}
-
-        map = {}
-
         coord_generator = CoordGenerator(x_count, y_count)
-        rock_coords = coord_generator.get_non_repeating_coords_series(rock_count)
-        grass_coords = coord_generator.get_non_repeating_coords_series(grass_count)
-        predator_coords = coord_generator.get_non_repeating_coords_series(
-            predators_count
-        )
-        herbivore_coords = coord_generator.get_non_repeating_coords_series(
-            herbivore_count
-        )
+        rock_coords = coord_generator.get_non_rpt_coords_srs(rock_count)
+        grass_coords = coord_generator.get_non_rpt_coords_srs(grass_count)
+        predator_coords = coord_generator.get_non_rpt_coords_srs(predators_count)
+        herbivore_coords = coord_generator.get_non_rpt_coords_srs(herbivore_count)
+                
+        map_data = {}
 
         for x, y in rock_coords:
-            map[(x, y)] = Rock(x, y)
+            map_data[(x, y)] = Rock(x, y)
 
         for x, y in grass_coords:
-            map[(x, y)] = Grass(x, y)
+            map_data[(x, y)] = Grass(x, y)
 
         for x, y in predator_coords:
-            map[(x, y)] = Predator(x, y)
+            map_data[(x, y)] = Predator(x, y)
 
         for x, y in herbivore_coords:
-            map[(x, y)] = Herbivore(x, y)
+            map_data[(x, y)] = Herbivore(x, y)
 
-        return map
+        game_map = Map(map_data, self.config)
+
+        return game_map
