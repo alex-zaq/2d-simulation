@@ -1,9 +1,6 @@
-from .creature import Creature
+from .creatures import Creature, Herbivore, Predator
 from .entity import Entity
-from .grass import Grass
-from .ground import Ground
-from .herbivore import Herbivore
-from .predator import Predator
-from .rock import Rock
+from .objects import Grass, Rock
 
-__all__ = ["Entity", "Creature", "Predator", "Herbivore", "Rock", "Grass", "Ground"]
+__all__ = ["Entity", "Creature", "Herbivore", "Predator", "Grass", "Rock"]
+
