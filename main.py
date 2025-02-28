@@ -3,15 +3,21 @@ from src.simulation import Backend, Backend_config, Gui_config, GuiFrontend
 if __name__ == "__main__":
     backend_config = Backend_config(
         map_size=(25, 15),
-        herbivores_start_count=1,
-        predators_start_count=0,
-        grass_count=5,
-        rock_count=0,
-        predator_search_algoritm="bfs",
+        grass_count=20,
+        rock_count=5,
+        predators_start_count=1,
+        herbivores_start_count=4,
+
+
         herbivore_search_algoritm="bfs",
-        predator_breeding=False,
         herbivore_breeding=False,
-        herbivore_escaping_skill=False,
+        herbivore_escaping=False,
+        herbivore_escaping_radius=2,
+        herbivore_through_wall=True,
+
+        predator_search_algoritm="bfs",
+        predator_breeding=False,
+        predator_through_wall=False,
     )
 
     gui_config = Gui_config(
@@ -21,6 +27,7 @@ if __name__ == "__main__":
         ground_pict="images/Ground.png",
         grass_pict="images/Grass.png",
         grid_color="gray",
+        delay_ms=900,
     )
 
     b = Backend(backend_config)
