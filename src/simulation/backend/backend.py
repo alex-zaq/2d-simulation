@@ -16,19 +16,21 @@ class Backend:
         self.config = config
         self._set_spawner(Spawner(config))
         self._set_behavior_algoritms()
-        
         self.history = []
+        # self.generate_map()
 
     def generate_map(self):
         self.game_map = self.spawner.generate_map()
         self.history.append(deepcopy(self.game_map))
 
     def get_map(self):
-        return self.game_map.map
+        if hasattr(self, "game_map"):
+           return self.game_map.map
 
     def next_step(self):
-        self.history.append(deepcopy(self.game_map))
-        self._do_move()
+        if hasattr(self, "game_map"):
+            self.history.append(deepcopy(self.game_map))
+            self._do_move()
 
     def previous_step(self):
         if self.history:
@@ -83,6 +85,7 @@ class Backend:
             setattr(entity_cls, aatr, algoritm)
 
     def _do_move(self):
+                        
         coords_lst = list(self.game_map.map)
         self._reset_move_status()
         for coords in coords_lst:
