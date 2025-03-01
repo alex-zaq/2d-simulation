@@ -38,6 +38,7 @@ class Button:
 class GuiFrontend:
     def __init__(self, gui_config):
         self.gui_config = gui_config
+        
 
     def use_backend(self, backend):
         self.backend = backend
@@ -85,6 +86,8 @@ class GuiFrontend:
         self._draw_grid()
         self._draw_btns()
         self._images_init()
+        
+        self.map = None
 
     def draw_map(self):
         self._draw_grid()
@@ -135,6 +138,11 @@ class GuiFrontend:
 
         if not btn.is_hovered(pos):
             return auto_step_flag
+        
+        if self.map is None:
+            self.backend.generate_map()
+            self.map = self.backend.get_map()
+            self.draw_map()
 
         return True
 
@@ -146,7 +154,9 @@ class GuiFrontend:
 
         self.backend.next_step()
         self.map = self.backend.get_map()
-        self.draw_map()
+        
+        if self.map is not None:
+            self.draw_map()
 
         return False
 
@@ -157,8 +167,12 @@ class GuiFrontend:
             return auto_flag_status
 
         self.backend.previous_step()
+        
+        
         self.map = self.backend.get_map()
-        self.draw_map()
+
+        if self.map is not None:
+            self.draw_map()
 
         return False
 
@@ -180,7 +194,6 @@ class GuiFrontend:
                 self.backend.next_step()
                 self.map = self.backend.get_map()
                 self.draw_map()
-                print("next step")
                 pygame.time.delay(self.delay_ms)
 
     def _draw_grid(self):
