@@ -52,7 +52,8 @@ class Map:
                 nx, ny = x + dx, y + dy
                 if nx < 0 or ny < 0 or nx > max_x or ny > max_y:
                     continue
-                closest_coords.append((nx, ny))
+                if (nx, ny) not in self.map:
+                    closest_coords.append((nx, ny))
         return closest_coords
     
     
