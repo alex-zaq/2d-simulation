@@ -10,3 +10,4 @@ class Gui_config:
     grass_pict: str
     grid_color: str
     delay_ms: int
+    cell_size: int

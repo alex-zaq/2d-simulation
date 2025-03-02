@@ -9,8 +9,9 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
 GRAY = (150, 150, 150)
-GRID_COLOR = (200, 200, 200)  # Light gray
+GRID_COLOR = (200, 200, 200)
 BUTTON_COLOR = (150, 150, 150)
 BUTTON_HOVER_COLOR = (180, 180, 180)
 BUTTON_PANEL_COLOR = (220, 220, 220)
@@ -38,7 +39,6 @@ class Button:
 class GuiFrontend:
     def __init__(self, gui_config):
         self.gui_config = gui_config
-        
 
     def use_backend(self, backend):
         self.backend = backend
@@ -72,7 +72,8 @@ class GuiFrontend:
         GRID_WIDTH, GRID_HEIGHT = self.backend.config.map_size
         self.GRID_WIDTH = GRID_WIDTH
         self.GRID_HEIGHT = GRID_HEIGHT
-        self.CELL_SIZE = 40
+        # self.CELL_SIZE = 40
+        self.CELL_SIZE = self.gui_config.cell_size
         self.GRID_AREA_WIDTH = self.GRID_WIDTH * self.CELL_SIZE
         self.GRID_AREA_HEIGHT = self.GRID_HEIGHT * self.CELL_SIZE
 
@@ -81,12 +82,13 @@ class GuiFrontend:
         self.SCREEN_HEIGHT = self.GRID_AREA_HEIGHT + self.BUTTON_PANEL_HEIGHT
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         pygame.font.init()
+        self.label_font = pygame.font.Font(None, 20)
 
-        self.delay_ms = self.gui_config.delay_ms        
+        self.delay_ms = self.gui_config.delay_ms
         self._draw_grid()
         self._draw_btns()
         self._images_init()
-        
+
         self.map = None
 
     def draw_map(self):
@@ -94,9 +96,29 @@ class GuiFrontend:
 
         for x, y in self.map:
             img = self.get_img_by_entity(self.map[(x, y)])
+            number_text = self.label_font.render(
+                str(self.map[(x, y)].get_label()), False, BLACK
+            )
+            number_pos = self.get_label_pos(img, number_text)
+            img.fill(
+                WHITE,
+                (
+                    number_pos[0],
+                    number_pos[1],
+                    number_text.get_width(),
+                    number_text.get_height(),
+                ),
+            )
+            img.blit(number_text, number_pos)
             self.screen.blit(img, (x * self.CELL_SIZE + 1, y * self.CELL_SIZE + 1))
 
-        pygame.display.update()
+        pygame.display.flip()
+
+    def get_label_pos(self, img, number_text):
+        number_x = img.get_width() - number_text.get_width()
+        number_y = 0
+        number_pos = (number_x, number_y)
+        return number_pos
 
     def get_img_by_entity(self, entity):
         if isinstance(entity, Grass):
@@ -107,8 +129,6 @@ class GuiFrontend:
             return self.predator_image
         elif isinstance(entity, Rock):
             return self.rock_image
-        # elif isinstance(entity, Ground):
-        #     return self.ground_image
         else:
             raise ValueError("Unknown entity type")
 
@@ -138,7 +158,7 @@ class GuiFrontend:
 
         if not btn.is_hovered(pos):
             return auto_step_flag
-        
+
         if self.map is None:
             self.backend.generate_map()
             self.map = self.backend.get_map()
@@ -154,7 +174,7 @@ class GuiFrontend:
 
         self.backend.next_step()
         self.map = self.backend.get_map()
-        
+
         if self.map is not None:
             self.draw_map()
 
@@ -167,8 +187,7 @@ class GuiFrontend:
             return auto_flag_status
 
         self.backend.previous_step()
-        
-        
+
         self.map = self.backend.get_map()
 
         if self.map is not None:
@@ -187,7 +206,9 @@ class GuiFrontend:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     auto_step_flag = self.on_click_reset_btn(event.pos, auto_step_flag)
                     auto_step_flag = self.on_click_next_btn(event.pos, auto_step_flag)
-                    auto_step_flag = self.on_click_previous_btn(event.pos, auto_step_flag)
+                    auto_step_flag = self.on_click_previous_btn(
+                        event.pos, auto_step_flag
+                    )
                     auto_step_flag = self.on_click_run(event.pos, auto_step_flag)
 
             if auto_step_flag:
