@@ -1,23 +1,24 @@
-from src.simulation import Backend, Backend_config, Gui_config, GuiFrontend
+from src.simulation import Backend, Backend_config, Gui_config, GuiFrontend, Simulation
 
 if __name__ == "__main__":
     backend_config = Backend_config(
         map_size=(25, 15),
         grass_count=20,
-        rock_count=5,
+        rock_count=10,
         predators_start_count=1,
-        herbivores_start_count=4,
-
-
+        herbivores_start_count=2,
         herbivore_search_algoritm="bfs",
-        herbivore_breeding=False,
-        herbivore_escaping=False,
+        # herbivore_breeding=False,
+        herbivore_breeding=True,
+        herbivore_escaping=True,
         herbivore_escaping_radius=2,
+        # herbivore_through_wall=False,
         herbivore_through_wall=True,
-
         predator_search_algoritm="bfs",
-        predator_breeding=False,
-        predator_through_wall=False,
+        # predator_breeding=False,
+        predator_breeding=True,
+        # predator_through_wall=False,
+        predator_through_wall=True,
     )
 
     gui_config = Gui_config(
@@ -27,12 +28,10 @@ if __name__ == "__main__":
         ground_pict="images/Ground.png",
         grass_pict="images/Grass.png",
         grid_color="gray",
-        delay_ms=900,
+        delay_ms=600,
+        cell_size=50,
     )
 
-    b = Backend(backend_config)
-    f = GuiFrontend(gui_config)
-    f.use_backend(b)
+    simulation = Simulation(Backend(backend_config), GuiFrontend(gui_config))
 
-    f.window_init()
-    f.run()
+    simulation.run()
