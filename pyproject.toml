@@ -11,6 +11,7 @@ pygame = "^2.6.1"
 ruff = "^0.9.6"
 pre-commit = "^4.1.0"
 pytest = "^8.3.4"
+loguru = "^0.7.3"
 
 
 [build-system]
