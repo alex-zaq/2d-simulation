@@ -1,7 +1,7 @@
 import random
 
-from .map import Map
 from .entities import Grass, Herbivore, Predator, Rock
+from .map import Map
 
 
 class CoordGenerator:
@@ -42,7 +42,7 @@ class Spawner:
         grass_coords = coord_generator.get_non_rpt_coords_srs(grass_count)
         predator_coords = coord_generator.get_non_rpt_coords_srs(predators_count)
         herbivore_coords = coord_generator.get_non_rpt_coords_srs(herbivore_count)
-                
+
         map_data = {}
 
         for x, y in rock_coords:
