@@ -24,19 +24,22 @@ class Backend:
     def generate_map(self):
         self.game_map = self.spawner.generate_map()
         self.history.append(deepcopy(self.game_map))
+        self.step = 0
 
     def get_map(self):
         if hasattr(self, "game_map"):
-            return self.game_map.map
+            return self.game_map
 
     def next_step(self):
         if hasattr(self, "game_map"):
             self.history.append(deepcopy(self.game_map))
             self._do_move()
+            self.step += 1
 
     def previous_step(self):
         if self.history:
             self.game_map = self.history.pop()
+            self.step -= 1
 
     def _set_spawner(self, spawner):
         self.spawner = spawner
