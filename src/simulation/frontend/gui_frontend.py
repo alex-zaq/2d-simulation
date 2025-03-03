@@ -3,6 +3,7 @@ import sys
 import pygame
 
 from ..backend.entities import Grass, Herbivore, Predator, Rock
+from .interface import FrontendBase
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -36,7 +37,7 @@ class Button:
         return self.rect.collidepoint(pos)
 
 
-class GuiFrontend:
+class GuiFrontend(FrontendBase):
     def __init__(self, gui_config):
         self.gui_config = gui_config
 
@@ -66,7 +67,7 @@ class GuiFrontend:
             orig_ground_img, (self.CELL_SIZE, self.CELL_SIZE)
         )
 
-    def window_init(self):
+    def init(self):
         pygame.init()
         pygame.display.set_caption("2d simulation")
         GRID_WIDTH, GRID_HEIGHT = self.backend.config.map_size
@@ -89,15 +90,15 @@ class GuiFrontend:
         self._draw_btns()
         self._images_init()
 
-        self.map = None
+        self.game_map = None
 
     def draw_map(self):
         self._draw_grid()
 
-        for x, y in self.map:
-            img = self.get_img_by_entity(self.map[(x, y)])
+        for x, y in self.game_map.map:
+            img = self.get_img_by_entity(self.game_map.map[(x, y)])
             number_text = self.label_font.render(
-                str(self.map[(x, y)].get_label()), False, BLACK
+                str(self.game_map.map[(x, y)].get_label()), False, BLACK
             )
             number_pos = self.get_label_pos(img, number_text)
             img.fill(
@@ -148,7 +149,7 @@ class GuiFrontend:
         # self.draw_img(self.herbivore_image, 7, 8)
 
         self.backend.generate_map()
-        self.map = self.backend.get_map()
+        self.game_map = self.backend.get_map()
         self.draw_map()
 
         return False
@@ -159,9 +160,9 @@ class GuiFrontend:
         if not btn.is_hovered(pos):
             return auto_step_flag
 
-        if self.map is None:
+        if self.game_map is None:
             self.backend.generate_map()
-            self.map = self.backend.get_map()
+            self.game_map = self.backend.get_map()
             self.draw_map()
 
         return True
@@ -173,9 +174,9 @@ class GuiFrontend:
             return auto_flag_status
 
         self.backend.next_step()
-        self.map = self.backend.get_map()
+        self.gema_map = self.backend.get_map()
 
-        if self.map is not None:
+        if self.game_map is not None:
             self.draw_map()
 
         return False
@@ -188,9 +189,9 @@ class GuiFrontend:
 
         self.backend.previous_step()
 
-        self.map = self.backend.get_map()
+        self.game_map = self.backend.get_map()
 
-        if self.map is not None:
+        if self.game_map is not None:
             self.draw_map()
 
         return False
@@ -213,7 +214,7 @@ class GuiFrontend:
 
             if auto_step_flag:
                 self.backend.next_step()
-                self.map = self.backend.get_map()
+                self.game_map = self.backend.get_map()
                 self.draw_map()
                 pygame.time.delay(self.delay_ms)
 

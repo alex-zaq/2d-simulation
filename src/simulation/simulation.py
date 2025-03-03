@@ -8,5 +8,5 @@ class Simulation:
         self.frontend.use_backend(self.backend)
 
     def run(self):
-        self.frontend.window_init()
+        self.frontend.init()
         self.frontend.run()
