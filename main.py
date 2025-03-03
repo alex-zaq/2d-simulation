@@ -1,4 +1,12 @@
-from src.simulation import Backend, Backend_config, Gui_config, GuiFrontend, Simulation
+from src.simulation import (
+    Backend,
+    Backend_config,
+    Console_config,
+    ConsoleFrontend,  # noqa: F401
+    Gui_config,
+    GuiFrontend,
+    Simulation,
+)
 
 if __name__ == "__main__":
     backend_config = Backend_config(
@@ -32,6 +40,21 @@ if __name__ == "__main__":
         cell_size=50,
     )
 
-    simulation = Simulation(Backend(backend_config), GuiFrontend(gui_config))
+    console_config = Console_config(
+        rock_symbol="o",
+        predator_symbol="c",
+        herbivore_symbol="w",
+        ground_symbol=".",
+        grass_symbol="*",
+        border_symbol="-",
+    )
+
+    frontend = GuiFrontend(gui_config)
+    # frontend = ConsoleFrontend(console_config)
+
+    simulation = Simulation(
+        backend=Backend(backend_config),
+        frontend=frontend,
+    )
 
     simulation.run()
