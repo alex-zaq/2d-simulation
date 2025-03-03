@@ -124,6 +124,12 @@ class Map:
         )
         return best_coord
 
+    def get_entity_by_coords(self, coords):
+        if coords in self.map:
+            return self.map[coords]
+        else:
+            return None
+
     def _get_neighbors(self, coords, target_cls, through_walls=False):
         max_x, max_y = self.config.map_size
         if not through_walls:
