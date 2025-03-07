@@ -3,10 +3,9 @@ from copy import deepcopy
 from ..logger import get_logger, measure_time
 from .behavior_algoritms import (
     BFS,
-    BreedingAlgoritm,
-    BreedingAlgoritmBase,
-    EscapingAlgoritm,
-    EscapingAlgoritmBase,
+    A_star,
+    Breeding_algoritm,
+    Escaping_algoritm,
 )
 from .entities import Herbivore, Predator
 from .spawner import Spawner
@@ -85,19 +84,19 @@ class Backend:
             case "bfs":
                 return BFS
             case "A*":
-                raise NotImplementedError
+                return A_star
 
     def get_escaping_alg(self, name):
         if name:
-            return EscapingAlgoritm
+            return Escaping_algoritm
         else:
-            return EscapingAlgoritmBase
+            raise NotImplementedError
 
     def get_breeding_alg(self, name):
         if name:
-            return BreedingAlgoritm
+            return Breeding_algoritm
         else:
-            return BreedingAlgoritmBase
+            raise NotImplementedError
 
     def _set_algoritm(self, aatr, entity_cls, algoritm):
         if algoritm:

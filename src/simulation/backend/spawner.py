@@ -4,7 +4,7 @@ from .entities import Grass, Herbivore, Predator, Rock
 from .map import Map
 
 
-class CoordGenerator:
+class Coord_generator:
     def __init__(self, x_count, y_count):
         self.x_count = x_count
         self.y_count = y_count
@@ -37,7 +37,7 @@ class Spawner:
 
         x_count, y_count = self.config.map_size
 
-        coord_generator = CoordGenerator(x_count, y_count)
+        coord_generator = Coord_generator(x_count, y_count)
         rock_coords = coord_generator.get_non_rpt_coords_srs(rock_count)
         grass_coords = coord_generator.get_non_rpt_coords_srs(grass_count)
         predator_coords = coord_generator.get_non_rpt_coords_srs(predators_count)
