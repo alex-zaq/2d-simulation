@@ -16,8 +16,12 @@ class ConsoleFrontend(FrontendBase):
         self.predator_symbol = self.console_config.predator_symbol
         self.herbivore_symbol = self.console_config.herbivore_symbol
 
+    def reset(self):
+        self.backend.generate_map()
+        self.game_map = self.backend.get_map()
+        self._draw_map()
+
     def run(self):
-        # self._clear_screen()
         while (command := input(self.input_msg)) != "e":
             match command:
                 case "n":
@@ -30,9 +34,7 @@ class ConsoleFrontend(FrontendBase):
                         self.game_map = self.backend.get_map()
                         self._draw_map()
                 case "reset":
-                    self.backend.generate_map()
-                    self.game_map = self.backend.get_map()
-                    self._draw_map()
+                    self.reset()
                 case _:
                     print("Unknown command")
 
@@ -55,13 +57,9 @@ class ConsoleFrontend(FrontendBase):
 
     def _clear_screen(self):
         print("\033[H\033[J", end="")
-        # os.system('cls')
 
     def _draw_map(self):
         x_max, y_max = self.backend.config.map_size
-
-        # self._clear_screen()
-
         border = "+" + "-" * (x_max * 2 + 1) + "+"
         print(border)
 
@@ -74,10 +72,7 @@ class ConsoleFrontend(FrontendBase):
             res.append("| " + " ".join(row_cells) + " |")
 
         map_res = "\n".join(res)
-
         print(map_res)
-
         print(border)
-
         info_lines = [f"Шаг симуляции: {self.backend.step}"]
         print("\n".join(info_lines))
