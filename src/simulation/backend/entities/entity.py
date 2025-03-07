@@ -10,7 +10,7 @@ class Entity:
     def move(self, game_map):
         pass
 
-    def get_label(self):
+    def get_energy_label(self):
         return ""
 
     def __eq__(self, other):
