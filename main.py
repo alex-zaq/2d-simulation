@@ -11,22 +11,20 @@ from src.simulation import (
 if __name__ == "__main__":
     backend_config = Backend_config(
         map_size=(25, 15),
-        grass_count=20,
+        grass_count=15,
         rock_count=10,
         predators_start_count=1,
         herbivores_start_count=2,
-        herbivore_search_algoritm="bfs",
-        # herbivore_breeding=False,
+        herbivore_search_algoritm="A*",
+        predator_search_algoritm="A*",
+        # herbivore_search_algoritm="bfs",
+        # predator_search_algoritm="bfs",
         herbivore_breeding=True,
+        herbivore_through_wall=True,
+        predator_through_wall=True,
         herbivore_escaping=True,
         herbivore_escaping_radius=2,
-        # herbivore_through_wall=False,
-        herbivore_through_wall=True,
-        predator_search_algoritm="bfs",
-        # predator_breeding=False,
         predator_breeding=True,
-        # predator_through_wall=False,
-        predator_through_wall=True,
     )
 
     gui_config = Gui_config(
