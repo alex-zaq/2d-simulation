@@ -10,17 +10,17 @@ class Creature(Entity):
         super().__init__(x, y)
         self.energy = 0
 
-    def get_label(self):
+    def get_energy_label(self):
         return str(self.energy)
 
 
 class Herbivore(Creature):
     def move(self, game_map):
-        search_algoritm = self.__class__.search_algoritm
-        escaping_algoritm = self.__class__.escaping_algoritm
-        breeding_algoritm = self.__class__.breeding_algoritm
+        search_alg = self.__class__.search_algoritm
+        escaping_alg = self.__class__.escaping_algoritm
+        breeding_alg = self.__class__.breeding_algoritm
 
-        if escaping_coords := escaping_algoritm.search(game_map, self, Predator):
+        if escaping_coords := escaping_alg.search(game_map, self, Predator):
             old_x, old_y = self.x, self.y
             new_x, new_y = escaping_coords
             self.x, self.y = new_x, new_y
@@ -29,8 +29,8 @@ class Herbivore(Creature):
             self.wait_move = False
             return
 
-        if (self.energy >= 3) and (
-            breeding_coords := breeding_algoritm.free_coords(game_map, self)
+        if self.energy >= 3 and (
+            breeding_coords := breeding_alg.free_coords(game_map, self)
         ):
             new_x, new_y = breeding_coords
             self.energy = 0
@@ -40,7 +40,7 @@ class Herbivore(Creature):
             game_map.map[(new_x, new_y)] = new_herbivore
             return
 
-        new_coords, status = search_algoritm.search(game_map, self, Grass)
+        new_coords, status = search_alg.search(game_map, self, Grass)
 
         if not new_coords:
             return
@@ -63,7 +63,7 @@ class Predator(Creature):
         search_algoritm = self.__class__.search_algoritm
         breeding_algoritm = self.__class__.breeding_algoritm
 
-        if (self.energy >= 3) and (
+        if self.energy >= 3 and (
             breeding_coords := breeding_algoritm.free_coords(game_map, self)
         ):
             new_x, new_y = breeding_coords
