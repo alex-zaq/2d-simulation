@@ -130,6 +130,33 @@ class Map:
         else:
             return None
 
+    def distance_through_walls(self, start, goal):
+        x_max, y_max = self.config.map_size
+        dx = min(abs(start[0] - goal[0]), x_max - abs(start[0] - goal[0]))
+        dy = min(abs(start[1] - goal[1]), y_max - abs(start[1] - goal[1]))
+        return (dx**2 + dy**2) ** 0.5
+
+    def distance(self, start, goal):
+        return ((start[0] - goal[0]) ** 2 + (start[1] - goal[1])) ** 0.5
+
+    def get_closest_target_by_coords(self, coords, target_cls):
+        res = [target for target in self.map.values() if isinstance(target, target_cls)]
+
+        if not res:
+            return None
+
+        x_max, y_max = self.config.map_size
+        x, y = coords
+
+        def wrapped_distance(target):
+            dx = min(abs(target.x - x), x_max - abs(target.x - x))
+            dy = min(abs(target.y - y), y_max - abs(target.y - y))
+            return dx**2 + dy**2
+
+        target = min(res, key=wrapped_distance)
+
+        return target
+
     def _get_neighbors(self, coords, target_cls, through_walls=False):
         max_x, max_y = self.config.map_size
         if not through_walls:
