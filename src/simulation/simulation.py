@@ -9,4 +9,5 @@ class Simulation:
 
     def run(self):
         self.frontend.init()
+        self.frontend.reset()
         self.frontend.run()
